@@ -1,17 +1,23 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-# Load zsh options, keybindings, and completion
-[[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
+# Set the base directory for legendary-zsh
+export LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 
-# Load zsh plugins (syntax highlighting, autosuggestions, fzf-tab)
-[[ -f /usr/share/omarchy-zsh/shell/plugins ]] && source /usr/share/omarchy-zsh/shell/plugins
+# Load zsh options, keybindings, and completion
+source "$LEGENDARY_ZSH_HOME/shell/zoptions"
+
+# Load zsh plugins (syntax highlighting, autosuggestions, completions, fzf-tab)
+source "$LEGENDARY_ZSH_HOME/shell/plugins"
+
+# Initialize completion system (after plugins so zsh-completions fpath is available)
+autoload -U compinit && compinit
 
 # Load tmux functions and alias
-[[ -f /usr/share/omarchy-zsh/shell/tmux ]] && source /usr/share/omarchy-zsh/shell/tmux
+source "$LEGENDARY_ZSH_HOME/shell/tmux"
 
 # Load shared shell configuration (aliases, functions, environment, tool init)
-[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
+source "$LEGENDARY_ZSH_HOME/shell/all"
 
 # Add your own customizations below
 #

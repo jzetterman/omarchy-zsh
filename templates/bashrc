@@ -11,6 +11,7 @@ if command -v zsh &> /dev/null; then
 fi
 
 # Load shared shell configuration (bash fallback when zsh is unavailable)
-[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
+export LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
+[[ -f "$LEGENDARY_ZSH_HOME/shell/all" ]] && source "$LEGENDARY_ZSH_HOME/shell/all"
 
 # Add your own exports, aliases, and functions below.

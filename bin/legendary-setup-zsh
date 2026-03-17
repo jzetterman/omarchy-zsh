@@ -1,0 +1,62 @@
+#!/bin/bash
+set -e
+
+LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
+PLUGINS_DIR="${LEGENDARY_ZSH_HOME}/plugins"
+ZSHRC="${HOME}/.zshrc"
+BASHRC="${HOME}/.bashrc"
+ZSHRC_TEMPLATE="${LEGENDARY_ZSH_HOME}/templates/zshrc"
+BASHRC_TEMPLATE="${LEGENDARY_ZSH_HOME}/templates/bashrc"
+INPUTRC_SRC="${LEGENDARY_ZSH_HOME}/shell/inputrc"
+ZSHRC_BACKUP="${HOME}/.zshrc.backup-$(date +%Y%m%d-%H%M%S)"
+BASHRC_BACKUP="${HOME}/.bashrc.backup-$(date +%Y%m%d-%H%M%S)"
+
+echo "Setting up legendary-zsh..."
+
+# Install zsh plugins via git clone
+mkdir -p "${PLUGINS_DIR}"
+
+clone_plugin() {
+  local name="$1" repo="$2"
+  if [ -d "${PLUGINS_DIR}/${name}" ]; then
+    echo "  - ${name} (already installed)"
+  else
+    echo "  - ${name} (cloning...)"
+    git clone --depth 1 "https://github.com/${repo}.git" "${PLUGINS_DIR}/${name}" >/dev/null 2>&1
+  fi
+}
+
+echo "Installing zsh plugins..."
+clone_plugin "zsh-syntax-highlighting" "zsh-users/zsh-syntax-highlighting"
+clone_plugin "zsh-autosuggestions"     "zsh-users/zsh-autosuggestions"
+clone_plugin "zsh-completions"         "zsh-users/zsh-completions"
+clone_plugin "fzf-tab"                 "Aloxaf/fzf-tab"
+
+# Install .zshrc
+if [ -f "${ZSHRC}" ]; then
+  cp "${ZSHRC}" "${ZSHRC_BACKUP}"
+fi
+cp "${ZSHRC_TEMPLATE}" "${ZSHRC}"
+
+# Install bash auto-launch
+if [ -f "${BASHRC}" ]; then
+  cp "${BASHRC}" "${BASHRC_BACKUP}"
+fi
+cp "${BASHRC_TEMPLATE}" "${BASHRC}"
+
+# Install inputrc (bash reads ~/.inputrc directly)
+cp -f "${INPUTRC_SRC}" "${HOME}/.inputrc"
+
+echo ""
+echo -e "\033[32m✓ legendary-zsh setup complete\033[0m"
+if [ -f "${ZSHRC_BACKUP}" ]; then
+  echo "  - Original .zshrc backed up to:"
+  echo "    ${ZSHRC_BACKUP}"
+  echo ""
+fi
+if [ -f "${BASHRC_BACKUP}" ]; then
+  echo "  - Original .bashrc backed up to:"
+  echo "    ${BASHRC_BACKUP}"
+  echo ""
+fi
+echo "Restart your terminal to activate zsh"

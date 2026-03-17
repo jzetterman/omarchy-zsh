@@ -1,0 +1,10 @@
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# Resolve the base directory (where legendary-zsh is cloned)
+LEGENDARY_ZSH_HOME="${LEGENDARY_ZSH_HOME:-$HOME/.local/share/legendary-zsh}"
+
+source "$LEGENDARY_ZSH_HOME/shell/envs"
+source "$LEGENDARY_ZSH_HOME/shell/aliases"
+source "$LEGENDARY_ZSH_HOME/shell/functions"
+source "$LEGENDARY_ZSH_HOME/shell/inits"

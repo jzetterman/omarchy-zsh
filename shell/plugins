@@ -1,19 +1,24 @@
-# Zsh plugins sourced from system packages and local clones
+# Zsh plugins sourced from local git clones
+LEGENDARY_ZSH_PLUGINS="${HOME}/.local/share/legendary-zsh/plugins"
+
+# zsh-completions (additional completion definitions — adds to $fpath, must be before compinit)
+if [[ -d "${LEGENDARY_ZSH_PLUGINS}/zsh-completions/src" ]]; then
+  fpath=("${LEGENDARY_ZSH_PLUGINS}/zsh-completions/src" $fpath)
+fi
 
 # Syntax highlighting (colors commands as you type)
-if [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -f "${LEGENDARY_ZSH_PLUGINS}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "${LEGENDARY_ZSH_PLUGINS}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
 # Autosuggestions (faint history suggestions as you type, accept with right-arrow)
-if [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [[ -f "${LEGENDARY_ZSH_PLUGINS}/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "${LEGENDARY_ZSH_PLUGINS}/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # fzf-tab (replace completion menu with fzf)
-FZF_TAB_HOME="${HOME}/.local/share/omarchy-zsh/fzf-tab"
-if [[ -f "${FZF_TAB_HOME}/fzf-tab.plugin.zsh" ]]; then
-  source "${FZF_TAB_HOME}/fzf-tab.plugin.zsh"
+if [[ -f "${LEGENDARY_ZSH_PLUGINS}/fzf-tab/fzf-tab.plugin.zsh" ]]; then
+  source "${LEGENDARY_ZSH_PLUGINS}/fzf-tab/fzf-tab.plugin.zsh"
   zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
   zstyle ':completion:*' menu no
 fi

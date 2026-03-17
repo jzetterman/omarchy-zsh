@@ -1,59 +1,39 @@
-Omarchy shell configuration for Zsh shell.
+Legendary shell configuration for Zsh. Based on [omarchy-zsh](https://github.com/omacom-io/omarchy-zsh) by [Ryan Hughes](https://github.com/ryanhughes).
 
-## Architecture
+## What's different from omarchy-zsh?
 
-Shared shell config (aliases, functions, environment, init) is pulled from [omadots](https://github.com/omacom-io/omadots) at package build time. This repo only contains the zsh-specific bits. Config is sourced directly from `/usr/share/` so package updates take effect immediately.
-
-### Build
-
-```mermaid
-graph LR
-    omadots[omadots] --> envs & aliases & functions & inits
-    zsh_repo[omarchy-zsh] --> zoptions
-    zsh_repo -->|templates| dotfiles["~/.zshrc, ~/.bashrc"]
-
-    subgraph "/usr/share/omarchy-zsh/shell/"
-        envs
-        aliases
-        functions
-        inits
-        zoptions
-    end
-
-    style omadots fill:#4a9,stroke:#333,color:#fff
-    style zsh_repo fill:#68f,stroke:#333,color:#fff
-    style zoptions fill:#68f,stroke:#333,color:#fff
-    style envs fill:#4a9,stroke:#333,color:#fff
-    style aliases fill:#4a9,stroke:#333,color:#fff
-    style functions fill:#4a9,stroke:#333,color:#fff
-    style inits fill:#4a9,stroke:#333,color:#fff
-```
-
-### Runtime
-
-```mermaid
-graph LR
-    bashrc[~/.bashrc] -->|exec zsh| zshrc[~/.zshrc]
-    zshrc --> zoptions & all
-    all --> envs & aliases & functions & inits
-
-    style zoptions fill:#68f,stroke:#333,color:#fff
-    style envs fill:#4a9,stroke:#333,color:#fff
-    style aliases fill:#4a9,stroke:#333,color:#fff
-    style functions fill:#4a9,stroke:#333,color:#fff
-    style inits fill:#4a9,stroke:#333,color:#fff
-```
-
-Green = shared (from omadots). Blue = zsh-specific (from this repo).
+- **Distro-agnostic** — no pacman, no `/usr/share/`. Clone it anywhere, works on Arch, Fedora, Ubuntu, etc.
+- **Zsh plugins via git clone** — syntax highlighting, autosuggestions, completions, and fzf-tab with no plugin manager or system packages required
+- **Enhanced tmux functions** — `tdl`, `tdlm`, and `tsl` from [Omarchy](https://github.com/omacom-io/omarchy) for dev layouts and swarm panes
+- **Tab completion that works** — `compinit` enabled with case-insensitive matching and fzf-tab integration
 
 ## Install
 
 ```bash
-# Install the package
-sudo pacman -S omarchy-zsh
+# Clone to ~/.local/share/legendary-zsh
+git clone git@github.com:jzetterman/legendary-zsh.git ~/.local/share/legendary-zsh
 
-# Setup zsh (optional: auto-launch from bash)
-omarchy-setup-zsh
+# Run setup (clones plugins, installs .zshrc, .bashrc, .inputrc)
+~/.local/share/legendary-zsh/bin/legendary-setup-zsh
+```
+
+## Update
+
+```bash
+cd ~/.local/share/legendary-zsh && git pull
+```
+
+## Architecture
+
+```mermaid
+graph LR
+    zshrc[~/.zshrc] --> zoptions & plugins & tmux & all
+    all --> envs & aliases & functions & inits
+    plugins --> sh[syntax-highlighting] & as[autosuggestions] & comp[completions] & ft[fzf-tab]
+
+    style zoptions fill:#68f,stroke:#333,color:#fff
+    style plugins fill:#68f,stroke:#333,color:#fff
+    style tmux fill:#68f,stroke:#333,color:#fff
 ```
 
 ## fzf Keybindings
@@ -65,23 +45,25 @@ omarchy-setup-zsh
 - **Ctrl+V** - Search Variables
 - **Alt+C** - cd into selected directory
 
+## Tmux Functions
+
+- **`tdl <ai> [<ai2>]`** - Dev layout: editor (70%), AI pane (30%), terminal (15% bottom)
+- **`tdlm <ai> [<ai2>]`** - Multi-project: one `tdl` window per subdirectory
+- **`tsl <count> <cmd>`** - Swarm layout: tiled panes all running the same command
+- **`t`** - Attach to existing tmux session or create a new one
+
 ## Customization
 
-To add your own configuration or override defaults:
-
-```bash
-# Edit your .zshrc
-nvim ~/.zshrc
-
-# Add customizations at the bottom after the omarchy-zsh loading
-```
-
-User customizations in `~/.zshrc` take precedence over system defaults.
+Add your own configuration at the bottom of `~/.zshrc` after the legendary-zsh loading.
 
 ## Uninstall
 
 ```bash
-sudo pacman -R omarchy-zsh
+rm -rf ~/.local/share/legendary-zsh
 ```
 
-To restore bash, copy a backup to `~/.bashrc` (backups are saved as `.bashrc.backup-*`).
+Restore your shell config from backups (saved as `~/.zshrc.backup-*` and `~/.bashrc.backup-*`).
+
+## Credits
+
+Originally created by [Ryan Hughes](https://github.com/ryanhughes) as [omarchy-zsh](https://github.com/omacom-io/omarchy-zsh). Licensed under MIT.

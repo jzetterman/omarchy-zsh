@@ -1,0 +1,43 @@
+_shell_name="${ZSH_VERSION:+zsh}"
+_shell_name="${_shell_name:-bash}"
+
+if command -v mise &>/dev/null; then
+  eval "$(mise activate "$_shell_name")"
+fi
+
+if command -v starship &>/dev/null; then
+  if [[ "$_shell_name" == "bash" ]]; then
+    # clear stale readline state before rendering prompt (prevents artifacts in prompt after abnormal exits like SIGQUIT)
+    __sanitize_prompt() { printf '\r\033[K'; }
+    PROMPT_COMMAND="__sanitize_prompt${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+  fi
+  eval "$(starship init "$_shell_name")"
+fi
+
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init "$_shell_name")"
+fi
+
+if command -v try &>/dev/null; then
+  eval "$(try init ~/Work/tries)"
+fi
+
+if command -v fzf &>/dev/null; then
+  if [[ "$_shell_name" == "bash" ]]; then
+    for f in /usr/share/fzf/completion.bash /usr/share/bash-completion/completions/fzf /usr/share/doc/fzf/examples/completion.bash; do
+      [[ -f $f ]] && source "$f" && break
+    done
+    for f in /usr/share/fzf/key-bindings.bash /usr/share/doc/fzf/examples/key-bindings.bash; do
+      [[ -f $f ]] && source "$f" && break
+    done
+  elif [[ "$_shell_name" == "zsh" ]]; then
+    for f in /usr/share/fzf/completion.zsh /usr/share/doc/fzf/examples/completion.zsh; do
+      [[ -f $f ]] && source "$f" && break
+    done
+    for f in /usr/share/fzf/key-bindings.zsh /usr/share/doc/fzf/examples/key-bindings.zsh; do
+      [[ -f $f ]] && source "$f" && break
+    done
+  fi
+fi
+
+unset _shell_name
