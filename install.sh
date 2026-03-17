@@ -129,7 +129,12 @@ prompt_fastfetch() {
 
   echo ""
   echo "Would you like to install fastfetch and run it when new terminal sessions start?"
-  if command -v gum &>/dev/null && gum confirm "" < /dev/tty 2>/dev/tty; then
+  local wants_fastfetch=false
+  if command -v gum &>/dev/null; then
+    gum confirm "" < /dev/tty 2>/dev/tty && wants_fastfetch=true || true
+  fi
+
+  if [ "$wants_fastfetch" = true ]; then
     install_pkg fastfetch
     if ! grep -qF 'fastfetch' "${HOME}/.zshrc"; then
       printf '\n# Show system info on new terminal sessions\ncommand -v fastfetch &>/dev/null && fastfetch\n' >> "${HOME}/.zshrc"
