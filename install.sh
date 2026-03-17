@@ -1,6 +1,30 @@
 #!/bin/bash
 
-LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
+# Wrap in main() so bash reads the entire script before executing.
+# This prevents subprocesses from consuming stdin when run via curl|bash.
+main() {
+  LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
+
+  install_deps
+  if [ -d "$LEGENDARY_ZSH_HOME/.git" ]; then
+    echo "Existing installation found. Updating..."
+    git -C "$LEGENDARY_ZSH_HOME" pull --ff-only
+    if [ -x "$LEGENDARY_ZSH_HOME/bin/legendary-migrate" ]; then
+      "$LEGENDARY_ZSH_HOME/bin/legendary-migrate"
+    fi
+  elif [ -d "$LEGENDARY_ZSH_HOME" ]; then
+    echo "Existing directory found but not a valid install. Re-installing..."
+    rm -rf "$LEGENDARY_ZSH_HOME"
+    git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME" || { echo "Error: git clone failed"; exit 1; }
+    "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh" || { echo "Error: setup failed"; exit 1; }
+  else
+    echo "Installing legendary-zsh..."
+    git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME" || { echo "Error: git clone failed"; exit 1; }
+    "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh" || { echo "Error: setup failed"; exit 1; }
+  fi
+
+  prompt_fastfetch
+}
 
 # --- Dependency installation ---
 
@@ -23,7 +47,6 @@ install_deps() {
       echo "Error: Homebrew is required on macOS. Install it from https://brew.sh"
       exit 1
     fi
-    # macOS ships with git and zsh, but handle them just in case
     echo "Installing dependencies via Homebrew..."
     brew install "${missing[@]}"
 
@@ -32,7 +55,6 @@ install_deps() {
     sudo pacman -S --needed --noconfirm "${missing[@]}"
 
   elif command -v apt-get &>/dev/null; then
-    # starship, zoxide, and eza aren't in default apt repos — install those separately
     local apt_pkgs=()
     local manual_pkgs=()
 
@@ -145,26 +167,4 @@ prompt_fastfetch() {
   touch "$state_dir/fastfetch-prompted"
 }
 
-# --- Main ---
-
-if [ -d "$LEGENDARY_ZSH_HOME/.git" ]; then
-  echo "Existing installation found. Updating..."
-  install_deps
-  git -C "$LEGENDARY_ZSH_HOME" pull --ff-only < /dev/null
-  if [ -x "$LEGENDARY_ZSH_HOME/bin/legendary-migrate" ]; then
-    "$LEGENDARY_ZSH_HOME/bin/legendary-migrate" < /dev/null
-  fi
-elif [ -d "$LEGENDARY_ZSH_HOME" ]; then
-  echo "Existing directory found but not a valid install. Re-installing..."
-  install_deps
-  rm -rf "$LEGENDARY_ZSH_HOME"
-  git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME" < /dev/null || { echo "Error: git clone failed"; exit 1; }
-  "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh" < /dev/null || { echo "Error: setup failed"; exit 1; }
-else
-  echo "Installing legendary-zsh..."
-  install_deps
-  git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME" < /dev/null || { echo "Error: git clone failed"; exit 1; }
-  "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh" < /dev/null || { echo "Error: setup failed"; exit 1; }
-fi
-
-prompt_fastfetch
+main
