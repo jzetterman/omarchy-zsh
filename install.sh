@@ -121,6 +121,12 @@ install_pkg() {
 }
 
 prompt_fastfetch() {
+  local state_dir="${HOME}/.local/state/legendary-zsh"
+  mkdir -p "$state_dir"
+
+  # Already asked — don't ask again
+  [ -f "$state_dir/fastfetch-prompted" ] && return
+
   echo ""
   if gum confirm "Would you like to install fastfetch and run it when new terminal sessions start?"; then
     install_pkg fastfetch
@@ -130,6 +136,9 @@ prompt_fastfetch() {
     fi
     echo -e "\033[32m✓ fastfetch enabled\033[0m"
   fi
+
+  # Record that we've asked, regardless of their choice
+  touch "$state_dir/fastfetch-prompted"
 }
 
 # --- Main ---
@@ -143,6 +152,6 @@ else
 
   git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME"
   "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh"
-
-  prompt_fastfetch
 fi
+
+prompt_fastfetch
