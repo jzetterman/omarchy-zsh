@@ -4,6 +4,12 @@
 # Load zsh options, keybindings, and completion
 [[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
 
+# Load zsh plugins (syntax highlighting, autosuggestions, fzf-tab)
+[[ -f /usr/share/omarchy-zsh/shell/plugins ]] && source /usr/share/omarchy-zsh/shell/plugins
+
+# Load tmux functions and alias
+[[ -f /usr/share/omarchy-zsh/shell/tmux ]] && source /usr/share/omarchy-zsh/shell/tmux
+
 # Load shared shell configuration (aliases, functions, environment, tool init)
 [[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
 

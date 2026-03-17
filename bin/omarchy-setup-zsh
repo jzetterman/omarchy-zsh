@@ -26,6 +26,16 @@ cp "${BASHRC_TEMPLATE}" "${BASHRC}"
 # Install inputrc (bash reads ~/.inputrc directly)
 cp -f "${INPUTRC_SRC}" "${HOME}/.inputrc"
 
+# Install zsh plugins from system packages
+sudo pacman -S --noconfirm --needed zsh-syntax-highlighting zsh-completions zsh-autosuggestions
+
+# Install fzf-tab via git clone
+FZF_TAB_HOME="${HOME}/.local/share/omarchy-zsh/fzf-tab"
+if [ ! -d "${FZF_TAB_HOME}" ]; then
+  mkdir -p "$(dirname "${FZF_TAB_HOME}")"
+  git clone https://github.com/Aloxaf/fzf-tab.git "${FZF_TAB_HOME}"
+fi
+
 echo ""
 echo -e "\033[32m✓ zsh setup complete\033[0m"
 if [ -f "${ZSHRC_BACKUP}" ]; then

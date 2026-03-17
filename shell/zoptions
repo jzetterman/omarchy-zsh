@@ -16,6 +16,9 @@ setopt HIST_IGNORE_SPACE        # Ignore commands starting with space
 setopt HIST_REDUCE_BLANKS       # Remove unnecessary blanks
 setopt HIST_VERIFY              # Don't execute immediately upon history expansion
 
+# Initialize completion system
+autoload -U compinit && compinit
+
 # Completion configuration
 setopt COMPLETE_IN_WORD         # Complete from both ends of word
 setopt ALWAYS_TO_END            # Move cursor to end after completion
