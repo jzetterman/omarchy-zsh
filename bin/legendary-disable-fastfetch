@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ZSHRC="${HOME}/.zshrc"
+
+if ! grep -qF 'fastfetch' "$ZSHRC" 2>/dev/null; then
+  echo "fastfetch is not enabled in your .zshrc"
+  exit 0
+fi
+
+# Remove the fastfetch lines from .zshrc
+sed -i '/# Show system info on new terminal sessions/d' "$ZSHRC"
+sed -i '/command -v fastfetch.*fastfetch/d' "$ZSHRC"
+
+echo -e "\033[32m✓ fastfetch disabled\033[0m"
+echo "Restart your terminal for changes to take effect."
