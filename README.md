@@ -1,4 +1,4 @@
-Legendary shell configuration for Zsh. Works on **macOS** and **Linux** (Arch, Ubuntu/Debian, Fedora). Based on [omarchy-zsh](https://github.com/basecamp/omarchy-zsh) by [Ryan Hughes](https://github.com/ryanhughes).
+Legendary shell configuration for Zsh. Works on **macOS** and **Linux** (Arch, Ubuntu/Debian, Fedora). Based on [omarchy-zsh](https://github.com/omacom-io/omarchy-zsh) by [Ryan Hughes](https://github.com/ryanhughes).
 
 ## What's different from omarchy-zsh?
 
@@ -90,4 +90,4 @@ Restore your shell config from backups (saved as `~/.zshrc.backup-*` and `~/.bas
 
 ## Credits
 
-Originally created by [Ryan Hughes](https://github.com/ryanhughes) as [omarchy-zsh](https://github.com/basecamp/omarchy-zsh). Licensed under MIT.
+Originally created by [Ryan Hughes](https://github.com/ryanhughes) as [omarchy-zsh](https://github.com/omacom-io/omarchy-zsh). Licensed under MIT.
