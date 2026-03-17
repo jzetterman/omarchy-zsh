@@ -23,21 +23,26 @@ if command -v try &>/dev/null; then
 fi
 
 if command -v fzf &>/dev/null; then
+  # Detect Homebrew prefix for macOS
+  _brew_prefix="${HOMEBREW_PREFIX:-$(command -v brew &>/dev/null && brew --prefix)}"
+
   if [[ "$_shell_name" == "bash" ]]; then
-    for f in /usr/share/fzf/completion.bash /usr/share/bash-completion/completions/fzf /usr/share/doc/fzf/examples/completion.bash; do
+    for f in /usr/share/fzf/completion.bash /usr/share/bash-completion/completions/fzf /usr/share/doc/fzf/examples/completion.bash ${_brew_prefix:+$_brew_prefix/opt/fzf/shell/completion.bash}; do
       [[ -f $f ]] && source "$f" && break
     done
-    for f in /usr/share/fzf/key-bindings.bash /usr/share/doc/fzf/examples/key-bindings.bash; do
+    for f in /usr/share/fzf/key-bindings.bash /usr/share/doc/fzf/examples/key-bindings.bash ${_brew_prefix:+$_brew_prefix/opt/fzf/shell/key-bindings.bash}; do
       [[ -f $f ]] && source "$f" && break
     done
   elif [[ "$_shell_name" == "zsh" ]]; then
-    for f in /usr/share/fzf/completion.zsh /usr/share/doc/fzf/examples/completion.zsh; do
+    for f in /usr/share/fzf/completion.zsh /usr/share/doc/fzf/examples/completion.zsh ${_brew_prefix:+$_brew_prefix/opt/fzf/shell/completion.zsh}; do
       [[ -f $f ]] && source "$f" && break
     done
-    for f in /usr/share/fzf/key-bindings.zsh /usr/share/doc/fzf/examples/key-bindings.zsh; do
+    for f in /usr/share/fzf/key-bindings.zsh /usr/share/doc/fzf/examples/key-bindings.zsh ${_brew_prefix:+$_brew_prefix/opt/fzf/shell/key-bindings.zsh}; do
       [[ -f $f ]] && source "$f" && break
     done
   fi
+
+  unset _brew_prefix
 fi
 
 unset _shell_name
