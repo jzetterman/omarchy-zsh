@@ -1,8 +1,8 @@
-Legendary shell configuration for Zsh. Based on [omarchy-zsh](https://github.com/omacom-io/omarchy-zsh) by [Ryan Hughes](https://github.com/ryanhughes).
+Legendary shell configuration for Zsh. Works on **macOS** and **Linux** (Arch, Ubuntu/Debian, Fedora). Based on [omarchy-zsh](https://github.com/omacom-io/omarchy-zsh) by [Ryan Hughes](https://github.com/ryanhughes).
 
 ## What's different from omarchy-zsh?
 
-- **Distro-agnostic** — no pacman, no `/usr/share/`. Clone it anywhere, works on Arch, Fedora, Ubuntu, macOS, etc.
+- **Cross-platform** — works on macOS and Linux. No pacman, no `/usr/share/`. Clone it anywhere.
 - **Zsh plugins via git clone** — syntax highlighting, autosuggestions, completions, and fzf-tab with no plugin manager or system packages required
 - **Enhanced tmux functions** — `tdl`, `tdlm`, and `tsl` from [Omarchy](https://github.com/omacom-io/omarchy) for dev layouts and swarm panes
 - **Tab completion that works** — `compinit` enabled with case-insensitive matching and fzf-tab integration
@@ -28,11 +28,24 @@ Restart your terminal to activate zsh.
 
 ## Update
 
+After installation, `legendary-update` is available on your PATH. Run it any time to get the latest changes:
+
 ```bash
 legendary-update
 ```
 
-This pulls the latest changes, installs any new dependencies, and runs pending migrations.
+This will:
+- Pull the latest changes from the repository
+- Run any pending migrations (e.g. config fixes for new OS support)
+- Install any newly added dependencies
+
+## Disable fastfetch
+
+If you enabled fastfetch during installation and want to turn it off:
+
+```bash
+legendary-disable-fastfetch
+```
 
 ## Architecture
 
