@@ -125,8 +125,8 @@ prompt_fastfetch() {
   mkdir -p "$state_dir"
 
   # Already asked or already configured — don't ask again
-  [ -f "$state_dir/fastfetch-prompted" ] && return
-  grep -qF 'fastfetch' "${HOME}/.zshrc" 2>/dev/null && return
+  if [ -f "$state_dir/fastfetch-prompted" ]; then return; fi
+  if grep -qF 'fastfetch' "${HOME}/.zshrc" 2>/dev/null; then return; fi
 
   echo ""
   if gum confirm "Would you like to install fastfetch and run it when new terminal sessions start?" < /dev/tty; then
