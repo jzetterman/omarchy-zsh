@@ -128,7 +128,7 @@ prompt_fastfetch() {
   [ -f "$state_dir/fastfetch-prompted" ] && return
 
   echo ""
-  if gum confirm "Would you like to install fastfetch and run it when new terminal sessions start?"; then
+  if gum confirm "Would you like to install fastfetch and run it when new terminal sessions start?" < /dev/tty; then
     install_pkg fastfetch
     ZSHRC="${HOME}/.zshrc"
     if ! grep -qF 'fastfetch' "$ZSHRC"; then
