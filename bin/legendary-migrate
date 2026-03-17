@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
+STATE_DIR="${HOME}/.local/state/legendary-zsh/migrations"
+MIGRATIONS_DIR="${LEGENDARY_ZSH_HOME}/migrations"
+
+mkdir -p "$STATE_DIR"
+
+for file in "$MIGRATIONS_DIR"/*.sh; do
+  [ -f "$file" ] || continue
+  filename=$(basename "$file")
+
+  if [[ ! -f "$STATE_DIR/$filename" ]]; then
+    echo "Running migration: ${filename%.sh}"
+
+    if bash "$file"; then
+      touch "$STATE_DIR/$filename"
+    else
+      echo ""
+      echo "Migration failed: $filename"
+      read -p "Skip and continue? [y/N] " choice
+      if [[ "$choice" =~ ^[Yy]$ ]]; then
+        touch "$STATE_DIR/$filename"
+      else
+        exit 1
+      fi
+    fi
+  fi
+done

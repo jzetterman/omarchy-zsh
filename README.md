@@ -41,23 +41,29 @@ brew install fzf starship zoxide eza
 
 </details>
 
-### Setup
+### Install
 
 ```bash
-# Clone to ~/.local/share/legendary-zsh
-git clone git@github.com:jzetterman/legendary-zsh.git ~/.local/share/legendary-zsh
-
-# Run setup (clones plugins, installs .zshrc, .bashrc, .inputrc)
-~/.local/share/legendary-zsh/bin/legendary-setup-zsh
+curl -fsSL https://raw.githubusercontent.com/jzetterman/legendary-zsh/master/install.sh | bash
 ```
 
 Restart your terminal to activate zsh.
 
 ## Update
 
+Run the same install command — it detects an existing installation and updates instead:
+
 ```bash
-cd ~/.local/share/legendary-zsh && git pull
+curl -fsSL https://raw.githubusercontent.com/jzetterman/legendary-zsh/master/install.sh | bash
 ```
+
+Or if you already have legendary-zsh on your PATH:
+
+```bash
+legendary-update
+```
+
+Updates pull the latest changes and run any pending migrations (e.g., updating your `~/.zshrc` or `~/.bashrc` when templates change).
 
 ## Architecture
 

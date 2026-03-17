@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
+
+echo "Updating legendary-zsh..."
+
+# Pull latest changes
+git -C "$LEGENDARY_ZSH_HOME" pull --ff-only
+
+# Run any pending migrations
+"$LEGENDARY_ZSH_HOME/bin/legendary-migrate"
+
+echo ""
+echo -e "\033[32m✓ legendary-zsh updated\033[0m"
+echo "Restart your terminal to pick up any changes."

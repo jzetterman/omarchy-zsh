@@ -47,6 +47,13 @@ cp "${BASHRC_TEMPLATE}" "${BASHRC}"
 # Install inputrc (bash reads ~/.inputrc directly)
 cp -f "${INPUTRC_SRC}" "${HOME}/.inputrc"
 
+# Mark all current migrations as already run (fresh install needs none)
+MIGRATIONS_STATE="${HOME}/.local/state/legendary-zsh/migrations"
+mkdir -p "$MIGRATIONS_STATE"
+for file in "$LEGENDARY_ZSH_HOME"/migrations/*.sh; do
+  [ -f "$file" ] && touch "$MIGRATIONS_STATE/$(basename "$file")"
+done
+
 echo ""
 echo -e "\033[32m✓ legendary-zsh setup complete\033[0m"
 if [ -f "${ZSHRC_BACKUP}" ]; then
