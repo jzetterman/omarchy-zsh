@@ -128,12 +128,13 @@ prompt_fastfetch() {
   if grep -qF 'fastfetch' "${HOME}/.zshrc" 2>/dev/null; then return; fi
 
   echo ""
-  if gum confirm "Would you like to install fastfetch and run it when new terminal sessions start?" < /dev/tty; then
+  echo "Would you like to install fastfetch and run it when new terminal sessions start?"
+  if command -v gum &>/dev/null && gum confirm "" < /dev/tty 2>/dev/tty; then
     install_pkg fastfetch
     if ! grep -qF 'fastfetch' "${HOME}/.zshrc"; then
       printf '\n# Show system info on new terminal sessions\ncommand -v fastfetch &>/dev/null && fastfetch\n' >> "${HOME}/.zshrc"
     fi
-    echo -e "\033[32m✓ fastfetch enabled\033[0m"
+    echo "fastfetch enabled!"
   fi
 
   touch "$state_dir/fastfetch-prompted"
@@ -141,14 +142,19 @@ prompt_fastfetch() {
 
 # --- Main ---
 
-if [ -d "$LEGENDARY_ZSH_HOME" ]; then
+if [ -d "$LEGENDARY_ZSH_HOME/.git" ]; then
   echo "Existing installation found. Updating..."
-  "$LEGENDARY_ZSH_HOME/bin/legendary-update"
   install_deps
+  "$LEGENDARY_ZSH_HOME/bin/legendary-update"
+elif [ -d "$LEGENDARY_ZSH_HOME" ]; then
+  echo "Existing directory found but not a valid install. Re-installing..."
+  install_deps
+  rm -rf "$LEGENDARY_ZSH_HOME"
+  git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME" || { echo "Error: git clone failed"; exit 1; }
+  "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh" || { echo "Error: setup failed"; exit 1; }
 else
   echo "Installing legendary-zsh..."
   install_deps
-
   git clone https://github.com/jzetterman/legendary-zsh.git "$LEGENDARY_ZSH_HOME" || { echo "Error: git clone failed"; exit 1; }
   "$LEGENDARY_ZSH_HOME/bin/legendary-setup-zsh" || { echo "Error: setup failed"; exit 1; }
 fi
