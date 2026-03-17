@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 PLUGINS_DIR="${LEGENDARY_ZSH_HOME}/plugins"
@@ -67,3 +66,35 @@ if [ -f "${BASHRC_BACKUP}" ]; then
   echo ""
 fi
 echo "Restart your terminal to activate zsh"
+
+# Offer to install fastfetch
+STATE_DIR="${HOME}/.local/state/legendary-zsh"
+mkdir -p "$STATE_DIR"
+
+if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2>/dev/null; then
+  echo ""
+  echo "Would you like to install fastfetch and run it when new terminal sessions start?"
+  wants_fastfetch=false
+  if command -v gum &>/dev/null; then
+    gum confirm "" && wants_fastfetch=true || true
+  fi
+  if [ "$wants_fastfetch" = true ]; then
+    if ! command -v fastfetch &>/dev/null; then
+      echo "Installing fastfetch..."
+      if [[ "$OSTYPE" == darwin* ]]; then
+        brew install fastfetch
+      elif command -v pacman &>/dev/null; then
+        sudo pacman -S --needed --noconfirm fastfetch
+      elif command -v apt-get &>/dev/null; then
+        sudo apt-get install -y fastfetch
+      elif command -v dnf &>/dev/null; then
+        sudo dnf install -y fastfetch
+      fi
+    fi
+    if ! grep -qF 'fastfetch' "$ZSHRC"; then
+      printf '\n# Show system info on new terminal sessions\ncommand -v fastfetch &>/dev/null && fastfetch\n' >> "$ZSHRC"
+    fi
+    echo -e "\033[32m✓ fastfetch enabled\033[0m"
+  fi
+  touch "$STATE_DIR/fastfetch-prompted"
+fi
