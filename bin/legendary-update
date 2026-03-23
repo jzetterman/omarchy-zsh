@@ -13,9 +13,39 @@ git -C "$LEGENDARY_ZSH_HOME" pull --ff-only || { echo "Error: git pull failed"; 
 # Install any new dependencies
 "$LEGENDARY_ZSH_HOME/bin/legendary-install-deps"
 
-# Offer to install fastfetch (only asks once)
+# Offer to switch default shell to zsh (only asks once)
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 mkdir -p "$STATE_DIR"
+_shell_changed=false
+
+if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
+  ZSH_PATH="$(command -v zsh 2>/dev/null)"
+  if [ -n "$ZSH_PATH" ]; then
+    if [ "$(basename "$SHELL")" != "zsh" ]; then
+      echo ""
+      echo "Would you like to set zsh as your default shell?"
+      wants_chsh=false
+      if command -v gum &>/dev/null; then
+        gum confirm "" && wants_chsh=true || true
+      else
+        printf "(y/N) "
+        read -r reply
+        [[ "$reply" =~ ^[Yy] ]] && wants_chsh=true
+      fi
+      if [ "$wants_chsh" = true ]; then
+        if chsh -s "$ZSH_PATH" || sudo chsh -s "$ZSH_PATH" "$USER"; then
+          echo -e "\033[32m✓ Default shell changed to zsh\033[0m"
+          _shell_changed=true
+        else
+          echo "Warning: chsh failed. You may need to run: sudo chsh -s $ZSH_PATH \$USER"
+        fi
+      fi
+    fi
+    touch "$STATE_DIR/chsh-prompted"
+  fi
+fi
+
+# Offer to install fastfetch (only asks once)
 ZSHRC="${HOME}/.zshrc"
 
 if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2>/dev/null; then
@@ -24,6 +54,10 @@ if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2
   wants_fastfetch=false
   if command -v gum &>/dev/null; then
     gum confirm "" && wants_fastfetch=true || true
+  else
+    printf "(y/N) "
+    read -r reply
+    [[ "$reply" =~ ^[Yy] ]] && wants_fastfetch=true
   fi
   if [ "$wants_fastfetch" = true ]; then
     if ! command -v fastfetch &>/dev/null; then
@@ -48,4 +82,8 @@ fi
 
 echo ""
 echo -e "\033[32m✓ legendary-zsh updated\033[0m"
-echo "Restart your terminal to pick up any changes."
+if [ "$_shell_changed" = true ]; then
+  echo "Log out and back in to start using zsh."
+else
+  echo "Restart your terminal to pick up changes."
+fi
