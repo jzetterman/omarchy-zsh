@@ -67,10 +67,38 @@ if [ -f "${BASHRC_BACKUP}" ]; then
 fi
 echo "Restart your terminal to activate zsh"
 
-# Offer to install fastfetch
+# Offer to switch default shell to zsh (only asks once)
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 mkdir -p "$STATE_DIR"
 
+if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
+  ZSH_PATH="$(command -v zsh 2>/dev/null)"
+  if [ -n "$ZSH_PATH" ]; then
+    if [ "$(basename "$SHELL")" != "zsh" ]; then
+      echo ""
+      echo "Would you like to set zsh as your default shell?"
+      wants_chsh=false
+      if command -v gum &>/dev/null; then
+        gum confirm "" && wants_chsh=true || true
+      else
+        printf "(y/N) "
+        read -r reply
+        [[ "$reply" =~ ^[Yy] ]] && wants_chsh=true
+      fi
+      if [ "$wants_chsh" = true ]; then
+        if chsh -s "$ZSH_PATH" 2>/dev/null; then
+          echo -e "\033[32m✓ Default shell changed to zsh\033[0m"
+          echo "  This will take effect on your next login."
+        else
+          echo "Warning: chsh failed. You may need to run: sudo chsh -s $ZSH_PATH \$USER"
+        fi
+      fi
+    fi
+    touch "$STATE_DIR/chsh-prompted"
+  fi
+fi
+
+# Offer to install fastfetch
 if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2>/dev/null; then
   echo ""
   echo "Would you like to install fastfetch and run it when new terminal sessions start?"
