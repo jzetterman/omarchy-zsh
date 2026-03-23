@@ -32,7 +32,7 @@ if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
         [[ "$reply" =~ ^[Yy] ]] && wants_chsh=true
       fi
       if [ "$wants_chsh" = true ]; then
-        if chsh -s "$ZSH_PATH" 2>/dev/null; then
+        if chsh -s "$ZSH_PATH" || sudo chsh -s "$ZSH_PATH" "$USER"; then
           echo -e "\033[32m✓ Default shell changed to zsh\033[0m"
           echo "  This will take effect on your next login."
         else
