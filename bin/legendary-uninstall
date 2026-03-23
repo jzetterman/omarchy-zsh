@@ -3,7 +3,7 @@
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 
-echo "This will remove legendary-zsh and its configuration."
+echo "This will remove legendary-zsh and restore your previous configuration."
 echo ""
 wants_uninstall=false
 if command -v gum &>/dev/null; then
@@ -19,60 +19,37 @@ if [ "$wants_uninstall" != true ]; then
   exit 0
 fi
 
-# Switch shell back to bash before removing config files
-_shell_changed=false
-BASH_PATH="$(command -v bash 2>/dev/null)"
-if [ -n "$BASH_PATH" ] && [ "$(basename "$SHELL")" = "zsh" ]; then
-  echo ""
-  echo "Your default shell is zsh. Switch back to bash?"
-  wants_bash=false
-  if command -v gum &>/dev/null; then
-    gum confirm "" && wants_bash=true || true
-  else
-    printf "(y/N) "
-    read -r reply
-    [[ "$reply" =~ ^[Yy] ]] && wants_bash=true
-  fi
-  if [ "$wants_bash" = true ]; then
-    if chsh -s "$BASH_PATH" || sudo chsh -s "$BASH_PATH" "$USER"; then
-      echo -e "  \033[32m✓\033[0m Default shell changed to bash"
-      _shell_changed=true
-    else
-      echo "  Warning: chsh failed. Run: sudo chsh -s $BASH_PATH \$USER"
-    fi
-  fi
-fi
+# Determine if user was on zsh before legendary-zsh
+_had_zshrc="$(ls -t "${HOME}/.zshrc.backup-"* 2>/dev/null | head -1)"
 
-# Restore or remove dotfiles
+# Restore dotfiles from backups
 for dotfile in .zshrc .bashrc; do
   current="${HOME}/${dotfile}"
-  [ -f "$current" ] || continue
   latest_backup="$(ls -t "${HOME}/${dotfile}.backup-"* 2>/dev/null | head -1)"
   if [ -n "$latest_backup" ]; then
-    echo ""
-    echo "Restore ${dotfile} from backup? (${latest_backup})"
-    wants_restore=false
-    if command -v gum &>/dev/null; then
-      gum confirm "" && wants_restore=true || true
-    else
-      printf "(y/N) "
-      read -r reply
-      [[ "$reply" =~ ^[Yy] ]] && wants_restore=true
-    fi
-    if [ "$wants_restore" = true ]; then
-      cp "$latest_backup" "$current"
-      echo -e "  \033[32m✓\033[0m Restored ${dotfile}"
-    else
-      rm -f "$current"
-      echo "  Removed ${dotfile}"
-    fi
+    cp "$latest_backup" "$current"
+    echo -e "\033[32m✓\033[0m Restored ${dotfile} from backup"
   else
     rm -f "$current"
-    echo "  Removed ${dotfile}"
   fi
 done
 
 rm -f "${HOME}/.inputrc"
+
+# Restore original default shell
+_shell_changed=false
+if [ "$(basename "$SHELL")" = "zsh" ] && [ -z "$_had_zshrc" ]; then
+  # No previous .zshrc — user was on bash before legendary-zsh
+  BASH_PATH="$(command -v bash 2>/dev/null)"
+  if [ -n "$BASH_PATH" ]; then
+    if chsh -s "$BASH_PATH" || sudo chsh -s "$BASH_PATH" "$USER"; then
+      echo -e "\033[32m✓\033[0m Default shell restored to bash"
+      _shell_changed=true
+    else
+      echo "Warning: could not restore shell. Run: sudo chsh -s $BASH_PATH \$USER"
+    fi
+  fi
+fi
 
 # Remove legendary-zsh directories
 rm -rf "$LEGENDARY_ZSH_HOME"
