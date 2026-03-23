@@ -73,7 +73,7 @@ elif command -v dnf &>/dev/null; then
 
   for pkg in "${missing[@]}"; do
     case "$pkg" in
-      starship|gum) manual_pkgs+=("$pkg") ;;
+      starship|eza|gum) manual_pkgs+=("$pkg") ;;
       *) dnf_pkgs+=("$pkg") ;;
     esac
   done
@@ -87,6 +87,15 @@ elif command -v dnf &>/dev/null; then
       starship)
         echo "Installing starship..."
         curl -sS https://starship.rs/install.sh | sh -s -- -y
+        ;;
+      eza)
+        echo "Installing eza..."
+        _arch="$(uname -m)"
+        if [ "$_arch" = "x86_64" ] || [ "$_arch" = "aarch64" ]; then
+          curl -sSfL "https://github.com/eza-community/eza/releases/latest/download/eza_${_arch}-unknown-linux-gnu.tar.gz" | sudo tar xz -C /usr/local/bin/
+        else
+          echo "Warning: could not install eza for architecture $_arch. Skipping."
+        fi
         ;;
       gum)
         echo "Installing gum..."
