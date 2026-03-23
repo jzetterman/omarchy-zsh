@@ -58,18 +58,16 @@ echo -e "\033[32m✓ legendary-zsh setup complete\033[0m"
 if [ -f "${ZSHRC_BACKUP}" ]; then
   echo "  - Original .zshrc backed up to:"
   echo "    ${ZSHRC_BACKUP}"
-  echo ""
 fi
 if [ -f "${BASHRC_BACKUP}" ]; then
   echo "  - Original .bashrc backed up to:"
   echo "    ${BASHRC_BACKUP}"
-  echo ""
 fi
-echo "Restart your terminal to activate zsh"
 
 # Offer to switch default shell to zsh (only asks once)
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 mkdir -p "$STATE_DIR"
+_shell_changed=false
 
 if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
   ZSH_PATH="$(command -v zsh 2>/dev/null)"
@@ -88,7 +86,7 @@ if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
       if [ "$wants_chsh" = true ]; then
         if chsh -s "$ZSH_PATH" || sudo chsh -s "$ZSH_PATH" "$USER"; then
           echo -e "\033[32m✓ Default shell changed to zsh\033[0m"
-          echo "  This will take effect on your next login."
+          _shell_changed=true
         else
           echo "Warning: chsh failed. You may need to run: sudo chsh -s $ZSH_PATH \$USER"
         fi
@@ -129,4 +127,11 @@ if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2
     echo -e "\033[32m✓ fastfetch enabled\033[0m"
   fi
   touch "$STATE_DIR/fastfetch-prompted"
+fi
+
+echo ""
+if [ "$_shell_changed" = true ]; then
+  echo "Log out and back in to start using zsh."
+else
+  echo "Restart your terminal to pick up changes."
 fi

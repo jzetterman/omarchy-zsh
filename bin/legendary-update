@@ -16,6 +16,7 @@ git -C "$LEGENDARY_ZSH_HOME" pull --ff-only || { echo "Error: git pull failed"; 
 # Offer to switch default shell to zsh (only asks once)
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 mkdir -p "$STATE_DIR"
+_shell_changed=false
 
 if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
   ZSH_PATH="$(command -v zsh 2>/dev/null)"
@@ -34,7 +35,7 @@ if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
       if [ "$wants_chsh" = true ]; then
         if chsh -s "$ZSH_PATH" || sudo chsh -s "$ZSH_PATH" "$USER"; then
           echo -e "\033[32m✓ Default shell changed to zsh\033[0m"
-          echo "  This will take effect on your next login."
+          _shell_changed=true
         else
           echo "Warning: chsh failed. You may need to run: sudo chsh -s $ZSH_PATH \$USER"
         fi
@@ -81,4 +82,8 @@ fi
 
 echo ""
 echo -e "\033[32m✓ legendary-zsh updated\033[0m"
-echo "Restart your terminal to pick up any changes."
+if [ "$_shell_changed" = true ]; then
+  echo "Log out and back in to start using zsh."
+else
+  echo "Restart your terminal to pick up changes."
+fi
