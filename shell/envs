@@ -1,2 +1,55 @@
 export EDITOR="nvim"
-export PATH="$PATH:$HOME/.local/bin:$HOME/.local/share/legendary-zsh/bin"
+
+# --- PATH setup ---
+# Ensure common system and application paths are present across all platforms.
+# Only directories that actually exist are added; duplicates are skipped.
+
+_lz_prepend() {
+  case ":$PATH:" in
+    *:"$1":*) ;;
+    *) [ -d "$1" ] && PATH="$1:$PATH" ;;
+  esac
+}
+
+_lz_append() {
+  case ":$PATH:" in
+    *:"$1":*) ;;
+    *) [ -d "$1" ] && PATH="$PATH:$1" ;;
+  esac
+}
+
+# System paths (append — ensure these are always available)
+_lz_append "/usr/local/bin"
+_lz_append "/usr/local/sbin"
+_lz_append "/usr/bin"
+_lz_append "/bin"
+_lz_append "/usr/sbin"
+_lz_append "/sbin"
+
+# macOS Homebrew (prepend — brew tools should override system)
+if [[ "$OSTYPE" == darwin* ]]; then
+  _lz_prepend "/usr/local/sbin"          # Intel Mac
+  _lz_prepend "/usr/local/bin"
+  _lz_prepend "/opt/homebrew/sbin"        # Apple Silicon
+  _lz_prepend "/opt/homebrew/bin"
+fi
+
+# Linux-specific paths
+if [[ "$OSTYPE" == linux* ]]; then
+  _lz_append "/snap/bin"                  # Snap (Ubuntu/Debian)
+fi
+
+# Developer tool paths (prepend — user installs take priority)
+_lz_prepend "$HOME/.cargo/bin"            # Rust
+_lz_prepend "$HOME/go/bin"               # Go
+
+# User-local paths (prepend — highest priority)
+_lz_prepend "$HOME/bin"
+_lz_prepend "$HOME/.local/bin"
+
+# Legendary-zsh scripts
+_lz_append "$HOME/.local/share/legendary-zsh/bin"
+
+export PATH
+
+unset -f _lz_prepend _lz_append
