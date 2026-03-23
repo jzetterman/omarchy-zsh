@@ -53,6 +53,10 @@ if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2
   wants_fastfetch=false
   if command -v gum &>/dev/null; then
     gum confirm "" && wants_fastfetch=true || true
+  else
+    printf "(y/N) "
+    read -r reply
+    [[ "$reply" =~ ^[Yy] ]] && wants_fastfetch=true
   fi
   if [ "$wants_fastfetch" = true ]; then
     if ! command -v fastfetch &>/dev/null; then
