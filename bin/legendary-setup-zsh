@@ -131,22 +131,7 @@ fi
 
 echo ""
 if [ "$_shell_changed" = true ]; then
-  echo "Log out to apply zsh as your default shell?"
-  wants_logout=false
-  if command -v gum &>/dev/null; then
-    gum confirm "" && wants_logout=true || true
-  else
-    printf "(y/N) "
-    read -r reply
-    [[ "$reply" =~ ^[Yy] ]] && wants_logout=true
-  fi
-  if [ "$wants_logout" = true ]; then
-    loginctl terminate-user "$USER" 2>/dev/null || pkill -u "$USER" 2>/dev/null || {
-      echo "Could not log out automatically. Please log out manually."
-    }
-  else
-    echo "Log out and back in when you're ready to start using zsh."
-  fi
+  echo "Log out and back in to start using zsh."
 else
   echo "Restart your terminal to pick up changes."
 fi
