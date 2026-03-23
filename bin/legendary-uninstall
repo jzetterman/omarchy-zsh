@@ -19,6 +19,30 @@ if [ "$wants_uninstall" != true ]; then
   exit 0
 fi
 
+# Switch shell back to bash before removing config files
+_shell_changed=false
+BASH_PATH="$(command -v bash 2>/dev/null)"
+if [ -n "$BASH_PATH" ] && [ "$(basename "$SHELL")" = "zsh" ]; then
+  echo ""
+  echo "Your default shell is zsh. Switch back to bash?"
+  wants_bash=false
+  if command -v gum &>/dev/null; then
+    gum confirm "" && wants_bash=true || true
+  else
+    printf "(y/N) "
+    read -r reply
+    [[ "$reply" =~ ^[Yy] ]] && wants_bash=true
+  fi
+  if [ "$wants_bash" = true ]; then
+    if chsh -s "$BASH_PATH" || sudo chsh -s "$BASH_PATH" "$USER"; then
+      echo -e "  \033[32m✓\033[0m Default shell changed to bash"
+      _shell_changed=true
+    else
+      echo "  Warning: chsh failed. Run: sudo chsh -s $BASH_PATH \$USER"
+    fi
+  fi
+fi
+
 # Restore or remove dotfiles
 for dotfile in .zshrc .bashrc; do
   current="${HOME}/${dotfile}"
@@ -50,34 +74,12 @@ done
 
 rm -f "${HOME}/.inputrc"
 
-# Offer to switch back to bash if using zsh
-BASH_PATH="$(command -v bash 2>/dev/null)"
-if [ -n "$BASH_PATH" ] && [ "$(basename "$SHELL")" = "zsh" ]; then
-  echo ""
-  echo "Your default shell is zsh. Switch back to bash?"
-  wants_bash=false
-  if command -v gum &>/dev/null; then
-    gum confirm "" && wants_bash=true || true
-  else
-    printf "(y/N) "
-    read -r reply
-    [[ "$reply" =~ ^[Yy] ]] && wants_bash=true
-  fi
-  if [ "$wants_bash" = true ]; then
-    if chsh -s "$BASH_PATH" || sudo chsh -s "$BASH_PATH" "$USER"; then
-      echo -e "  \033[32m✓\033[0m Default shell changed to bash"
-    else
-      echo "  Warning: chsh failed. Run: sudo chsh -s $BASH_PATH \$USER"
-    fi
-  fi
-fi
-
 # Remove legendary-zsh directories
 rm -rf "$LEGENDARY_ZSH_HOME"
 rm -rf "$STATE_DIR"
 
 echo ""
 echo -e "\033[32m✓ legendary-zsh uninstalled\033[0m"
-if [ "$(basename "$SHELL")" = "zsh" ]; then
+if [ "$_shell_changed" = true ]; then
   echo "Log out and back in to return to bash."
 fi
