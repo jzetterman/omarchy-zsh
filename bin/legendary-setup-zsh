@@ -133,5 +133,8 @@ echo ""
 if [ "$_shell_changed" = true ]; then
   echo "Log out and back in to start using zsh."
 else
-  echo "Restart your terminal to pick up changes."
+  echo "Open a new terminal to get started."
 fi
+echo ""
+echo "To update later, run: legendary-update"
+echo "To uninstall, run: legendary-uninstall"
