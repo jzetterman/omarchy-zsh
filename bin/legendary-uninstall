@@ -19,9 +19,6 @@ if [ "$wants_uninstall" != true ]; then
   exit 0
 fi
 
-# Determine if user was on zsh before legendary-zsh
-_had_zshrc="$(ls -t "${HOME}/.zshrc.backup-"* 2>/dev/null | head -1)"
-
 # Restore dotfiles from backups
 for dotfile in .zshrc .bashrc; do
   current="${HOME}/${dotfile}"
@@ -38,16 +35,17 @@ rm -f "${HOME}/.inputrc"
 
 # Restore original default shell
 _shell_changed=false
-if [ "$(basename "$SHELL")" = "zsh" ] && [ -z "$_had_zshrc" ]; then
-  # No previous .zshrc — user was on bash before legendary-zsh
-  BASH_PATH="$(command -v bash 2>/dev/null)"
-  if [ -n "$BASH_PATH" ]; then
-    if chsh -s "$BASH_PATH" || sudo chsh -s "$BASH_PATH" "$USER"; then
-      echo -e "\033[32m✓\033[0m Default shell restored to bash"
-      _shell_changed=true
-    else
-      echo "Warning: could not restore shell. Run: sudo chsh -s $BASH_PATH \$USER"
-    fi
+_original_shell=""
+if [ -f "${STATE_DIR}/original-shell" ]; then
+  _original_shell="$(cat "${STATE_DIR}/original-shell")"
+fi
+
+if [ -n "$_original_shell" ] && [ "$SHELL" != "$_original_shell" ]; then
+  if chsh -s "$_original_shell" || sudo chsh -s "$_original_shell" "$USER"; then
+    echo -e "\033[32m✓\033[0m Default shell restored to $(basename "$_original_shell")"
+    _shell_changed=true
+  else
+    echo "Warning: could not restore shell. Run: sudo chsh -s $_original_shell \$USER"
   fi
 fi
 

@@ -53,6 +53,9 @@ for file in "$LEGENDARY_ZSH_HOME"/migrations/*.sh; do
   [ -f "$file" ] && touch "$MIGRATIONS_STATE/$(basename "$file")"
 done
 
+# Record the user's original shell for uninstall
+echo "$SHELL" > "${HOME}/.local/state/legendary-zsh/original-shell"
+
 echo ""
 echo -e "\033[32m✓ legendary-zsh setup complete\033[0m"
 if [ -f "${ZSHRC_BACKUP}" ]; then
