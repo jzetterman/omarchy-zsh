@@ -28,7 +28,7 @@ elif command -v apt-get &>/dev/null; then
 
   for pkg in "${missing[@]}"; do
     case "$pkg" in
-      starship|zoxide|eza) manual_pkgs+=("$pkg") ;;
+      starship|zoxide|eza|gum) manual_pkgs+=("$pkg") ;;
       *) apt_pkgs+=("$pkg") ;;
     esac
   done
@@ -56,6 +56,14 @@ elif command -v apt-get &>/dev/null; then
         sudo apt-get update -qq
         sudo apt-get install -y eza
         ;;
+      gum)
+        echo "Installing gum..."
+        sudo mkdir -p /etc/apt/keyrings
+        curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+        echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list >/dev/null
+        sudo apt-get update -qq
+        sudo apt-get install -y gum
+        ;;
     esac
   done
 
@@ -65,7 +73,7 @@ elif command -v dnf &>/dev/null; then
 
   for pkg in "${missing[@]}"; do
     case "$pkg" in
-      starship) manual_pkgs+=("$pkg") ;;
+      starship|gum) manual_pkgs+=("$pkg") ;;
       *) dnf_pkgs+=("$pkg") ;;
     esac
   done
@@ -79,6 +87,16 @@ elif command -v dnf &>/dev/null; then
       starship)
         echo "Installing starship..."
         curl -sS https://starship.rs/install.sh | sh -s -- -y
+        ;;
+      gum)
+        echo "Installing gum..."
+        echo '[charm]
+name=Charm
+baseurl=https://repo.charm.sh/yum/
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo >/dev/null
+        sudo dnf install -y gum
         ;;
     esac
   done
