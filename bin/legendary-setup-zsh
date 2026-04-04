@@ -31,11 +31,19 @@ clone_plugin "zsh-autosuggestions"     "zsh-users/zsh-autosuggestions"
 clone_plugin "zsh-completions"         "zsh-users/zsh-completions"
 clone_plugin "fzf-tab"                 "Aloxaf/fzf-tab"
 
-# Install .zshrc
+# Install .zshrc (preserving user customizations below the marker comment)
+CUSTOMIZATION_MARKER="# Add your own customizations below"
+USER_CUSTOMIZATIONS=""
 if [ -f "${ZSHRC}" ]; then
   cp "${ZSHRC}" "${ZSHRC_BACKUP}"
+  # Extract everything after the customization marker from the OLD zshrc
+  USER_CUSTOMIZATIONS="$(sed -n "/${CUSTOMIZATION_MARKER}/,\$p" "${ZSHRC}" | tail -n +2)"
 fi
 cp "${ZSHRC_TEMPLATE}" "${ZSHRC}"
+# Re-append user customizations if any were found
+if [ -n "${USER_CUSTOMIZATIONS}" ]; then
+  printf '\n%s\n' "${USER_CUSTOMIZATIONS}" >> "${ZSHRC}"
+fi
 
 # Install bash auto-launch
 if [ -f "${BASHRC}" ]; then
