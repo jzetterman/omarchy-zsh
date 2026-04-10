@@ -7,8 +7,11 @@ BASHRC="${HOME}/.bashrc"
 ZSHRC_TEMPLATE="${LEGENDARY_ZSH_HOME}/templates/zshrc"
 BASHRC_TEMPLATE="${LEGENDARY_ZSH_HOME}/templates/bashrc"
 INPUTRC_SRC="${LEGENDARY_ZSH_HOME}/shell/inputrc"
+STARSHIP_TEMPLATE="${LEGENDARY_ZSH_HOME}/templates/starship"
+STARSHIP_CONFIG="${HOME}/.config/starship.toml"
 ZSHRC_BACKUP="${HOME}/.zshrc.backup-$(date +%Y%m%d-%H%M%S)"
 BASHRC_BACKUP="${HOME}/.bashrc.backup-$(date +%Y%m%d-%H%M%S)"
+STARSHIP_BACKUP="${HOME}/.config/starship.toml.backup-$(date +%Y%m%d-%H%M%S)"
 
 echo "Setting up legendary-zsh..."
 
@@ -54,6 +57,13 @@ cp "${BASHRC_TEMPLATE}" "${BASHRC}"
 # Install inputrc (bash reads ~/.inputrc directly)
 cp -f "${INPUTRC_SRC}" "${HOME}/.inputrc"
 
+# Install starship config (backing up any existing one)
+mkdir -p "${HOME}/.config"
+if [ -f "${STARSHIP_CONFIG}" ]; then
+  cp "${STARSHIP_CONFIG}" "${STARSHIP_BACKUP}"
+fi
+cp "${STARSHIP_TEMPLATE}" "${STARSHIP_CONFIG}"
+
 # Mark all current migrations as already run (fresh install needs none)
 MIGRATIONS_STATE="${HOME}/.local/state/legendary-zsh/migrations"
 mkdir -p "$MIGRATIONS_STATE"
@@ -73,6 +83,10 @@ fi
 if [ -f "${BASHRC_BACKUP}" ]; then
   echo "  - Original .bashrc backed up to:"
   echo "    ${BASHRC_BACKUP}"
+fi
+if [ -f "${STARSHIP_BACKUP}" ]; then
+  echo "  - Original starship.toml backed up to:"
+  echo "    ${STARSHIP_BACKUP}"
 fi
 
 # Offer to switch default shell to zsh (only asks once)

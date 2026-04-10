@@ -1,0 +1,153 @@
+
+add_newline = true
+follow_symlinks = true
+command_timeout = 1000
+format = '''$os$username$hostname$fill$kubernetes$git_branch$git_status$all$directory$character'''
+
+[aws]
+format = 'on [$symbol($profile )(\($region\) )]($style)'
+symbol = " "
+disabled = true
+
+[azure]
+disabled = false
+format = "[$symbol($username) on ($subscription)]($style) "
+symbol = "󰠅 "
+style = "blue bold"
+
+[c]
+symbol = " "
+
+[character]
+success_symbol = '[\$](bold green)'
+error_symbol = '[\$](bold red)'
+
+[directory]
+truncation_length = 80
+truncation_symbol = '…/'
+home_symbol = '󰋜 ~'
+read_only_style = '197'
+read_only = '  '
+format = '[$path]($style)[$read_only]($read_only_style) '
+style = 'bold white'
+
+[fill]
+symbol = ' '
+
+[git_branch]
+symbol = " "
+format = 'via [$symbol$branch]($style)'
+# truncation_length = 4
+truncation_symbol = '…/'
+style = 'bold green'
+
+[git_status]
+format = '([ \($all_status$ahead_behind\)]($style) )'
+style = 'bold green'
+conflicted = '[ confliced=${count}](red) '
+up_to_date = '[󰘽 up-to-date](green) '
+untracked = '[󰋗 untracked=${count}](red) '
+ahead = ' ahead=${count}'
+diverged = ' ahead=${ahead_count}  behind=${behind_count}'
+behind = ' behind=${count}'
+stashed = '[ stashed=${count}](green) '
+modified = '[󰛿 modified=${count}](yellow) '
+staged = '[󰐗 staged=${count}](green) '
+renamed = '[󱍸 renamed=${count}](yellow) '
+deleted = '[󰍶 deleted=${count}](red) '
+
+[golang]
+symbol = " "
+
+[hostname]
+ssh_symbol = " "
+ssh_only = false
+format = 'on [$hostname](bold yellow) '
+disabled = false
+
+[kubernetes]
+format = 'via [󱃾 $context\($namespace\)](bold purple) '
+disabled = false
+
+[lua]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[os]
+format = '[$symbol](bold white) '   
+disabled = false
+
+[os.symbols]
+Alpaquita = ""
+Alpine = ""
+AlmaLinux = ""
+Amazon = ""
+Android = ""
+Arch = ""
+Artix = ""
+CentOS = ""
+Debian = ""
+DragonFly = ""
+Emscripten = ""
+EndeavourOS = ""
+Fedora = ""
+FreeBSD = ""
+Garuda = "󰛓"
+Gentoo = ""
+HardenedBSD = "󰞌"
+Illumos = "󰈸"
+Kali = ""
+Linux = ""
+Mabox = ""
+Macos = ""
+Manjaro = ""
+Mariner = ""
+MidnightBSD = ""
+Mint = ""
+NetBSD = ""
+NixOS = ""
+OpenBSD = "󰈺"
+openSUSE = ""
+OracleLinux = "󰌷"
+Pop = ""
+Raspbian = ""
+Redhat = ""
+RedHatEnterprise = ""
+RockyLinux = ""
+Redox = "󰀘"
+Solus = "󰠳"
+SUSE = ""
+Ubuntu = ""
+Unknown = ""
+Void = ""
+Windows = "󰍲"
+
+[package]
+symbol = "󰏗 "
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[python]
+symbol = " "
+
+[rust]
+symbol = "󱘗 "
+
+[swift]
+symbol = " "
+
+[username]
+style_user = 'white bold'
+style_root = 'black bold'
+format = '[$user]($style) '
+disabled = false
+show_always = true
+
+[zig]
+symbol = " "
