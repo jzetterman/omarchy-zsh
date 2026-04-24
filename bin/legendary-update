@@ -2,6 +2,26 @@
 
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 
+# Prompt the user y/N. Returns 0 (yes) / 1 (no). When LEGENDARY_NONINTERACTIVE
+# is set, reads $1 as the override value — y/Y/yes/YES/1/true/TRUE counts as
+# yes; anything else (including empty) counts as no. Otherwise prompts via
+# gum when available, with a (y/N) read fallback.
+_lz_confirm() {
+  if [ -n "$LEGENDARY_NONINTERACTIVE" ]; then
+    case "$1" in
+      y|Y|yes|YES|1|true|TRUE) return 0 ;;
+      *) return 1 ;;
+    esac
+  fi
+  if command -v gum &>/dev/null; then
+    gum confirm ""
+  else
+    printf "(y/N) "
+    read -r reply
+    [[ "$reply" =~ ^[Yy] ]]
+  fi
+}
+
 echo "Updating legendary-zsh..."
 
 # Pull latest changes
@@ -24,15 +44,7 @@ if [ ! -f "$STATE_DIR/chsh-prompted" ]; then
     if [ "$(basename "$SHELL")" != "zsh" ]; then
       echo ""
       echo "Would you like to set zsh as your default shell?"
-      wants_chsh=false
-      if command -v gum &>/dev/null; then
-        gum confirm "" && wants_chsh=true || true
-      else
-        printf "(y/N) "
-        read -r reply
-        [[ "$reply" =~ ^[Yy] ]] && wants_chsh=true
-      fi
-      if [ "$wants_chsh" = true ]; then
+      if _lz_confirm "$LEGENDARY_CHSH"; then
         if chsh -s "$ZSH_PATH" || sudo chsh -s "$ZSH_PATH" "$USER"; then
           echo -e "\033[32m✓ Default shell changed to zsh\033[0m"
           _shell_changed=true
@@ -51,15 +63,7 @@ ZSHRC="${HOME}/.zshrc"
 if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2>/dev/null; then
   echo ""
   echo "Would you like to install fastfetch and run it when new terminal sessions start?"
-  wants_fastfetch=false
-  if command -v gum &>/dev/null; then
-    gum confirm "" && wants_fastfetch=true || true
-  else
-    printf "(y/N) "
-    read -r reply
-    [[ "$reply" =~ ^[Yy] ]] && wants_fastfetch=true
-  fi
-  if [ "$wants_fastfetch" = true ]; then
+  if _lz_confirm "$LEGENDARY_FASTFETCH"; then
     if ! command -v fastfetch &>/dev/null; then
       echo "Installing fastfetch..."
       if [[ "$OSTYPE" == darwin* ]]; then

@@ -37,6 +37,24 @@ During installation you'll be prompted to optionally install [fastfetch](https:/
 
 Restart your terminal to activate zsh.
 
+### Non-interactive install
+
+For automated provisioning (Ansible, cloud-init, CI), set `LEGENDARY_NONINTERACTIVE=1`. Every prompt skips with a preservation-safe default — your shell, existing starship config, and `~/.inputrc` are left alone. Opt in to specific prompts with the overrides below:
+
+| Env var | Default | Effect when `yes` |
+|---|---|---|
+| `LEGENDARY_CHSH` | no | Change the default login shell to zsh |
+| `LEGENDARY_STARSHIP_REPLACE` | no | Replace an existing `~/.config/starship.toml` (backing it up first) |
+| `LEGENDARY_FASTFETCH` | no | Install fastfetch and enable it on new shells |
+| `LEGENDARY_UNINSTALL_CONFIRM` | no | Confirm `legendary-uninstall` (destructive — default is to abort) |
+
+Example:
+
+```bash
+LEGENDARY_NONINTERACTIVE=1 LEGENDARY_CHSH=yes LEGENDARY_FASTFETCH=yes \
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/jzetterman/legendary-zsh/master/install.sh)"
+```
+
 ## Update
 
 After installation, `legendary-update` is available on your PATH. Run it any time to get the latest changes:
