@@ -1,0 +1,10 @@
+FROM archlinux:latest
+
+RUN pacman -Sy --noconfirm --needed git sudo bash zsh diffutils \
+ && pacman -Scc --noconfirm \
+ && useradd -m -s /bin/bash testuser \
+ && echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+USER testuser
+WORKDIR /home/testuser
+ENV SHELL=/bin/bash HOME=/home/testuser

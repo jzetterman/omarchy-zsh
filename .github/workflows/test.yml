@@ -1,0 +1,22 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [arch, ubuntu, fedora]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run test scenarios
+        run: ./tests/run.sh ${{ matrix.distro }}

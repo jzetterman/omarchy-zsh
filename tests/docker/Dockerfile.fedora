@@ -1,0 +1,10 @@
+FROM fedora:latest
+
+RUN dnf install -y --setopt=install_weak_deps=False git sudo bash zsh diffutils \
+ && dnf clean all \
+ && useradd -m -s /bin/bash testuser \
+ && echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+USER testuser
+WORKDIR /home/testuser
+ENV SHELL=/bin/bash HOME=/home/testuser
