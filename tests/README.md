@@ -34,7 +34,9 @@ tests/
 │   ├── 10_fastfetch_disable_removes_block.sh
 │   ├── 11_fastfetch_enable_idempotent.sh
 │   ├── 12_fastfetch_disable_noop_if_absent.sh
-│   └── 13_fastfetch_disable_legacy_format.sh
+│   ├── 13_fastfetch_disable_legacy_format.sh
+│   ├── 14_migration_applies_with_override.sh
+│   └── 15_migration_declines_preserves_bashrc.sh
 ├── assert.sh          # assertion helpers (sourced transitively via _lib.sh)
 ├── run.sh             # test runner
 └── README.md
