@@ -29,7 +29,12 @@ tests/
 │   ├── 05_bashrc_untouched.sh
 │   ├── 06_zshrc_user_content_preserved.sh
 │   ├── 07_uninstall_clean.sh
-│   └── 08_uninstall_preserves_user_starship.sh
+│   ├── 08_uninstall_preserves_user_starship.sh
+│   ├── 09_fastfetch_enable_adds_block.sh
+│   ├── 10_fastfetch_disable_removes_block.sh
+│   ├── 11_fastfetch_enable_idempotent.sh
+│   ├── 12_fastfetch_disable_noop_if_absent.sh
+│   └── 13_fastfetch_disable_legacy_format.sh
 ├── assert.sh          # assertion helpers (sourced transitively via _lib.sh)
 ├── run.sh             # test runner
 └── README.md

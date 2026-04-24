@@ -150,7 +150,7 @@ if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2
       fi
     fi
     if ! grep -qF 'fastfetch' "$ZSHRC"; then
-      printf '\n# Show system info on new terminal sessions\ncommand -v fastfetch &>/dev/null && fastfetch\n' >> "$ZSHRC"
+      printf '\n# legendary-zsh:fastfetch-start\ncommand -v fastfetch &>/dev/null && fastfetch\n# legendary-zsh:fastfetch-end\n' >> "$ZSHRC"
     fi
     echo -e "\033[32m✓ fastfetch enabled\033[0m"
   fi

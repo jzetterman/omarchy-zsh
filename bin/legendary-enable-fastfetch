@@ -1,0 +1,42 @@
+#!/bin/bash
+# Enable fastfetch: install it if missing, then append the marker-wrapped
+# invocation to ~/.zshrc. Idempotent — a no-op if already enabled.
+
+ZSHRC="${HOME}/.zshrc"
+STATE_DIR="${HOME}/.local/state/legendary-zsh"
+
+# Already enabled? Accept either the marker format or the legacy snippet.
+if grep -qF 'legendary-zsh:fastfetch-start' "$ZSHRC" 2>/dev/null \
+   || grep -qF '# Show system info on new terminal sessions' "$ZSHRC" 2>/dev/null; then
+  echo "fastfetch is already enabled in your .zshrc"
+  exit 0
+fi
+
+# Install fastfetch if missing (same OS detection as legendary-setup-zsh).
+if ! command -v fastfetch &>/dev/null; then
+  echo "Installing fastfetch..."
+  if [[ "$OSTYPE" == darwin* ]]; then
+    brew install fastfetch
+  elif command -v pacman &>/dev/null; then
+    sudo pacman -S --needed --noconfirm fastfetch
+  elif command -v apt-get &>/dev/null; then
+    sudo apt-get install -y fastfetch
+  elif command -v dnf &>/dev/null; then
+    sudo dnf install -y fastfetch
+  else
+    echo "Error: couldn't detect a package manager to install fastfetch." >&2
+    echo "Install fastfetch manually, then re-run this command." >&2
+    exit 1
+  fi
+fi
+
+# Append the marker-wrapped block so legendary-disable-fastfetch can remove
+# it cleanly with a range-delete on the start/end markers.
+printf '\n# legendary-zsh:fastfetch-start\ncommand -v fastfetch &>/dev/null && fastfetch\n# legendary-zsh:fastfetch-end\n' >> "$ZSHRC"
+
+# Ensure the prompted marker exists so legendary-update doesn't re-ask.
+mkdir -p "$STATE_DIR"
+touch "$STATE_DIR/fastfetch-prompted"
+
+echo -e "\033[32m✓ fastfetch enabled\033[0m"
+echo "Restart your terminal for changes to take effect."

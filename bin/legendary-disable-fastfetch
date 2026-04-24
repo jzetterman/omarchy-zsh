@@ -1,15 +1,33 @@
 #!/bin/bash
+# Disable fastfetch by removing its invocation block from ~/.zshrc.
+# The per-user state marker (~/.local/state/legendary-zsh/fastfetch-prompted)
+# is intentionally left in place — legendary-update shouldn't re-prompt, and
+# legendary-enable-fastfetch is the canonical path to turn it back on.
 
 ZSHRC="${HOME}/.zshrc"
 
-if ! grep -qF 'fastfetch' "$ZSHRC" 2>/dev/null; then
+# Detect enablement. The new format is wrapped in markers; the legacy format
+# (pre-marker) used a distinctive comment line.
+has_markers=false
+has_legacy=false
+grep -qF 'legendary-zsh:fastfetch-start' "$ZSHRC" 2>/dev/null && has_markers=true
+grep -qF '# Show system info on new terminal sessions' "$ZSHRC" 2>/dev/null && has_legacy=true
+
+if [ "$has_markers" = false ] && [ "$has_legacy" = false ]; then
   echo "fastfetch is not enabled in your .zshrc"
   exit 0
 fi
 
-# Remove the fastfetch lines from .zshrc
-sed -i '/# Show system info on new terminal sessions/d' "$ZSHRC"
-sed -i '/command -v fastfetch.*fastfetch/d' "$ZSHRC"
+# Remove the marker-wrapped block (new format).
+if [ "$has_markers" = true ]; then
+  sed -i '/^# legendary-zsh:fastfetch-start$/,/^# legendary-zsh:fastfetch-end$/d' "$ZSHRC"
+fi
+
+# Remove the legacy snippet for backward compatibility.
+if [ "$has_legacy" = true ]; then
+  sed -i '/^# Show system info on new terminal sessions$/d' "$ZSHRC"
+  sed -i '/^command -v fastfetch.*fastfetch$/d' "$ZSHRC"
+fi
 
 echo -e "\033[32m✓ fastfetch disabled\033[0m"
-echo "Restart your terminal for changes to take effect."
+echo "Run 'legendary-enable-fastfetch' to turn it back on."

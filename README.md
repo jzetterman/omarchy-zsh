@@ -68,12 +68,18 @@ This will:
 - Run any pending migrations (e.g. config fixes for new OS support)
 - Install any newly added dependencies
 
-## Disable fastfetch
+## Toggle fastfetch
 
-If you enabled fastfetch during installation and want to turn it off:
+Turn it off:
 
 ```bash
 legendary-disable-fastfetch
+```
+
+Turn it back on (installs fastfetch first if it's not on your system):
+
+```bash
+legendary-enable-fastfetch
 ```
 
 ## Architecture

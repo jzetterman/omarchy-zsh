@@ -59,3 +59,11 @@ run_uninstall() {
   env LEGENDARY_NONINTERACTIVE=1 LEGENDARY_UNINSTALL_CONFIRM=yes "$@" \
     bash "$LEGENDARY_ZSH_HOME/bin/legendary-uninstall"
 }
+
+# Plant a stub fastfetch binary on PATH so scripts that check
+# `command -v fastfetch` find one and skip the package install (which would
+# need network and real root). Use in scenarios that exercise the enable /
+# install path.
+stub_fastfetch() {
+  sudo sh -c 'printf "#!/bin/sh\necho \"(stub fastfetch)\"\n" > /usr/local/bin/fastfetch && chmod +x /usr/local/bin/fastfetch'
+}
