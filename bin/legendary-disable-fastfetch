@@ -4,6 +4,21 @@
 # is intentionally left in place — legendary-update shouldn't re-prompt, and
 # legendary-enable-fastfetch is the canonical path to turn it back on.
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-disable-fastfetch
+
+Removes the fastfetch invocation block from ~/.zshrc. Handles both the
+current marker-wrapped format and the pre-marker legacy format for
+backward compatibility.
+
+Run legendary-enable-fastfetch to turn it back on.
+EOF
+    exit 0
+    ;;
+esac
+
 ZSHRC="${HOME}/.zshrc"
 
 # Detect enablement. The new format is wrapped in markers; the legacy format

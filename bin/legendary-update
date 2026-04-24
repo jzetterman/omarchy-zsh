@@ -1,5 +1,25 @@
 #!/bin/bash
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-update
+
+Updates legendary-zsh to the latest version. Pulls the latest commits
+(fast-forward only), runs any pending migrations, installs any newly
+added dependencies, and re-offers chsh and fastfetch if those prompts
+haven't been answered yet.
+
+Environment (non-interactive mode):
+  LEGENDARY_NONINTERACTIVE=1        Skip prompts; preservation-safe defaults
+  LEGENDARY_CHSH=yes                Change default login shell to zsh
+  LEGENDARY_FASTFETCH=yes           Install fastfetch and enable on new shells
+  LEGENDARY_MIGRATE_APPLY=yes       Apply user-dotfile migrations without prompting
+EOF
+    exit 0
+    ;;
+esac
+
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 
 # Prompt the user y/N. Returns 0 (yes) / 1 (no). When LEGENDARY_NONINTERACTIVE

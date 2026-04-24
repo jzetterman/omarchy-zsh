@@ -36,7 +36,8 @@ tests/
 │   ├── 12_fastfetch_disable_noop_if_absent.sh
 │   ├── 13_fastfetch_disable_legacy_format.sh
 │   ├── 14_migration_applies_with_override.sh
-│   └── 15_migration_declines_preserves_bashrc.sh
+│   ├── 15_migration_declines_preserves_bashrc.sh
+│   └── 16_help_flag_works.sh
 ├── assert.sh          # assertion helpers (sourced transitively via _lib.sh)
 ├── run.sh             # test runner
 └── README.md

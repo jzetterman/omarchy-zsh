@@ -1,6 +1,27 @@
 #!/bin/bash
 set -e
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-migrate
+
+Runs any pending migrations from migrations/*.sh. Each migration runs
+at most once — successful runs are tracked by marker files in
+~/.local/state/legendary-zsh/migrations/.
+
+Migrations that modify user dotfiles prompt before applying.
+
+Environment:
+  LEGENDARY_NONINTERACTIVE=1        Skip prompts
+  LEGENDARY_MIGRATE_APPLY=yes       Apply user-dotfile migrations without
+                                    prompting (default in non-interactive
+                                    mode: decline)
+EOF
+    exit 0
+    ;;
+esac
+
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 STATE_DIR="${HOME}/.local/state/legendary-zsh/migrations"
 MIGRATIONS_DIR="${LEGENDARY_ZSH_HOME}/migrations"

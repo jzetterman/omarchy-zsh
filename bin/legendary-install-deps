@@ -1,5 +1,20 @@
 #!/bin/bash
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-install-deps
+
+Installs missing system dependencies (git, zsh, fzf, starship, zoxide,
+eza, gum) using the appropriate package manager for the current OS:
+macOS (brew), Arch (pacman), Ubuntu/Debian (apt), or Fedora (dnf).
+
+Safe to re-run; packages already present are skipped.
+EOF
+    exit 0
+    ;;
+esac
+
 missing=()
 
 for cmd in git zsh fzf starship zoxide eza gum; do

@@ -1,15 +1,38 @@
 #!/bin/bash
 
 # Fresh install only — for updates, use: legendary-update
-# Usage: install.sh [-b branch]
+# Usage: install.sh [-b branch] [-h]
 
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 BRANCH="master"
 
-while getopts "b:" opt; do
+show_help() {
+  cat <<EOF
+Usage: install.sh [-b <branch>]
+
+Installs legendary-zsh by cloning the repo to
+~/.local/share/legendary-zsh, installing missing system dependencies,
+and running first-time setup. Designed for the curl|bash one-liner.
+
+Options:
+  -b <branch>   Check out a non-default branch (default: master)
+  -h            Show this help
+
+Environment (non-interactive install):
+  LEGENDARY_NONINTERACTIVE=1        Skip prompts; preservation-safe defaults
+  LEGENDARY_STARSHIP_REPLACE=yes    Replace an existing ~/.config/starship.toml
+  LEGENDARY_CHSH=yes                Change default login shell to zsh
+  LEGENDARY_FASTFETCH=yes           Install fastfetch and enable on new shells
+
+For updates, run 'legendary-update' instead of this script.
+EOF
+}
+
+while getopts "b:h" opt; do
   case "$opt" in
     b) BRANCH="$OPTARG" ;;
-    *) echo "Usage: install.sh [-b branch]"; exit 1 ;;
+    h) show_help; exit 0 ;;
+    *) echo "Usage: install.sh [-b branch] [-h]"; exit 1 ;;
   esac
 done
 
