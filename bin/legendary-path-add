@@ -12,7 +12,11 @@ Use \$HOME or ~/ for paths under your home directory.
 EOF
 }
 
-if [ $# -ne 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+case "${1:-}" in
+  -h|--help) usage; exit 0 ;;
+esac
+
+if [ $# -ne 1 ]; then
   usage
   exit 1
 fi

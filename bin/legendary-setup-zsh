@@ -1,5 +1,29 @@
 #!/bin/bash
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-setup-zsh
+
+First-time setup (normally invoked by install.sh). Clones the zsh
+plugins, deploys ~/.zshrc (preserving user customizations below the
+marker), deploys ~/.inputrc only if absent, prompts before replacing
+~/.config/starship.toml, records the original default shell, and marks
+all existing migrations as already run.
+
+Safe to re-run; existing files are preserved or prompted before
+replacement.
+
+Environment (non-interactive mode):
+  LEGENDARY_NONINTERACTIVE=1        Skip prompts; preservation-safe defaults
+  LEGENDARY_STARSHIP_REPLACE=yes    Replace an existing ~/.config/starship.toml
+  LEGENDARY_CHSH=yes                Change default login shell to zsh
+  LEGENDARY_FASTFETCH=yes           Install fastfetch and enable on new shells
+EOF
+    exit 0
+    ;;
+esac
+
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 PLUGINS_DIR="${LEGENDARY_ZSH_HOME}/plugins"
 ZSHRC="${HOME}/.zshrc"

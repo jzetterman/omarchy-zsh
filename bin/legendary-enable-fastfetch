@@ -2,6 +2,21 @@
 # Enable fastfetch: install it if missing, then append the marker-wrapped
 # invocation to ~/.zshrc. Idempotent — a no-op if already enabled.
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-enable-fastfetch
+
+Installs fastfetch (if not already on PATH) and appends its invocation
+to ~/.zshrc so it runs on new terminal sessions. Idempotent: a no-op
+if fastfetch is already enabled.
+
+Run legendary-disable-fastfetch to turn it off.
+EOF
+    exit 0
+    ;;
+esac
+
 ZSHRC="${HOME}/.zshrc"
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 

@@ -1,5 +1,27 @@
 #!/bin/bash
 
+case "${1:-}" in
+  -h|--help)
+    cat <<EOF
+Usage: legendary-uninstall
+
+Removes legendary-zsh. Restores ~/.zshrc from the most recent backup,
+restores ~/.config/starship.toml from backup if one was made, removes
+~/.inputrc only if it matches legendary's bundled version, restores
+the original default shell, and deletes the install and state
+directories.
+
+User files we never managed (e.g. a pre-existing ~/.bashrc,
+customizations in ~/.config/legendary-zsh/) are left in place.
+
+Environment (non-interactive mode):
+  LEGENDARY_NONINTERACTIVE=1             Skip confirm prompt (default: abort)
+  LEGENDARY_UNINSTALL_CONFIRM=yes        Proceed with uninstall (destructive)
+EOF
+    exit 0
+    ;;
+esac
+
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 
