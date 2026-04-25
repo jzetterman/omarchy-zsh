@@ -63,7 +63,13 @@ if [ -r "$_lz_user_paths" ]; then
     _lz_line="${_lz_line#"${_lz_line%%[![:space:]]*}"}"
     _lz_line="${_lz_line%"${_lz_line##*[![:space:]]}"}"
     [ -z "$_lz_line" ] && continue
-    eval "_lz_prepend \"$_lz_line\""
+    # Expand a leading ~ and any literal $HOME / ${HOME} references
+    # explicitly. Avoids eval, which would re-expand any other shell
+    # metacharacters in the entry.
+    case "$_lz_line" in "~"*) _lz_line="$HOME${_lz_line#\~}" ;; esac
+    _lz_line="${_lz_line//\$\{HOME\}/$HOME}"
+    _lz_line="${_lz_line//\$HOME/$HOME}"
+    _lz_prepend "$_lz_line"
   done < "$_lz_user_paths"
 fi
 unset _lz_user_paths _lz_line
