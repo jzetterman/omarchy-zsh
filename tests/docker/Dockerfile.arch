@@ -1,6 +1,6 @@
 FROM archlinux:latest
 
-RUN pacman -Sy --noconfirm --needed git sudo bash zsh diffutils \
+RUN pacman -Sy --noconfirm --needed git sudo bash zsh diffutils curl \
  && pacman -Scc --noconfirm \
  && useradd -m -s /bin/bash testuser \
  && echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers

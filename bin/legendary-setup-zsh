@@ -34,25 +34,8 @@ STARSHIP_CONFIG="${HOME}/.config/starship.toml"
 ZSHRC_BACKUP="${HOME}/.zshrc.backup-$(date +%Y%m%d-%H%M%S)"
 STARSHIP_BACKUP="${HOME}/.config/starship.toml.backup-$(date +%Y%m%d-%H%M%S)"
 
-# Prompt the user y/N. Returns 0 (yes) / 1 (no). When LEGENDARY_NONINTERACTIVE
-# is set, reads $1 as the override value — y/Y/yes/YES/1/true/TRUE counts as
-# yes; anything else (including empty) counts as no. Otherwise prompts via
-# gum when available, with a (y/N) read fallback.
-_lz_confirm() {
-  if [ -n "$LEGENDARY_NONINTERACTIVE" ]; then
-    case "$1" in
-      y|Y|yes|YES|1|true|TRUE) return 0 ;;
-      *) return 1 ;;
-    esac
-  fi
-  if command -v gum &>/dev/null; then
-    gum confirm ""
-  else
-    printf "(y/N) "
-    read -r reply
-    [[ "$reply" =~ ^[Yy] ]]
-  fi
-}
+# shellcheck source=_legendary-common.sh
+source "$LEGENDARY_ZSH_HOME/bin/_legendary-common.sh"
 
 echo "Setting up legendary-zsh..."
 
@@ -161,24 +144,22 @@ if [ ! -f "$STATE_DIR/fastfetch-prompted" ] && ! grep -qF 'fastfetch' "$ZSHRC" 2
   echo ""
   echo "Would you like to install fastfetch and run it when new terminal sessions start?"
   if _lz_confirm "$LEGENDARY_FASTFETCH"; then
-    if ! command -v fastfetch &>/dev/null; then
-      echo "Installing fastfetch..."
-      if [[ "$OSTYPE" == darwin* ]]; then
-        brew install fastfetch
-      elif command -v pacman &>/dev/null; then
-        sudo pacman -S --needed --noconfirm fastfetch
-      elif command -v apt-get &>/dev/null; then
-        sudo apt-get install -y fastfetch
-      elif command -v dnf &>/dev/null; then
-        sudo dnf install -y fastfetch
+    if _install_fastfetch; then
+      if ! grep -qF 'fastfetch' "$ZSHRC"; then
+        printf '\n# legendary-zsh:fastfetch-start\ncommand -v fastfetch &>/dev/null && fastfetch\n# legendary-zsh:fastfetch-end\n' >> "$ZSHRC"
       fi
+      echo -e "\033[32m✓ fastfetch enabled\033[0m"
+      touch "$STATE_DIR/fastfetch-prompted"
+    else
+      echo -e "\033[31m✗ fastfetch install failed — skipping the .zshrc change.\033[0m" >&2
+      echo "  Fix the underlying issue above and re-run: legendary-enable-fastfetch" >&2
+      # Deliberately NOT touching the state marker so a future
+      # legendary-update can re-prompt after the user fixes things.
     fi
-    if ! grep -qF 'fastfetch' "$ZSHRC"; then
-      printf '\n# legendary-zsh:fastfetch-start\ncommand -v fastfetch &>/dev/null && fastfetch\n# legendary-zsh:fastfetch-end\n' >> "$ZSHRC"
-    fi
-    echo -e "\033[32m✓ fastfetch enabled\033[0m"
+  else
+    # User declined — touch the marker so we don't keep asking.
+    touch "$STATE_DIR/fastfetch-prompted"
   fi
-  touch "$STATE_DIR/fastfetch-prompted"
 fi
 
 echo ""

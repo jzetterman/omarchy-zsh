@@ -25,25 +25,8 @@ esac
 LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
 
-# Prompt the user y/N. Returns 0 (yes) / 1 (no). When LEGENDARY_NONINTERACTIVE
-# is set, reads $1 as the override value — y/Y/yes/YES/1/true/TRUE counts as
-# yes; anything else (including empty) counts as no. Otherwise prompts via
-# gum when available, with a (y/N) read fallback.
-_lz_confirm() {
-  if [ -n "$LEGENDARY_NONINTERACTIVE" ]; then
-    case "$1" in
-      y|Y|yes|YES|1|true|TRUE) return 0 ;;
-      *) return 1 ;;
-    esac
-  fi
-  if command -v gum &>/dev/null; then
-    gum confirm ""
-  else
-    printf "(y/N) "
-    read -r reply
-    [[ "$reply" =~ ^[Yy] ]]
-  fi
-}
+# shellcheck source=_legendary-common.sh
+source "$LEGENDARY_ZSH_HOME/bin/_legendary-common.sh"
 
 echo "This will remove legendary-zsh and restore your previous configuration."
 echo ""

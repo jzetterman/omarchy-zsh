@@ -1,6 +1,6 @@
 FROM fedora:latest
 
-RUN dnf install -y --setopt=install_weak_deps=False git sudo bash zsh diffutils \
+RUN dnf install -y --setopt=install_weak_deps=False git sudo bash zsh diffutils curl \
  && dnf clean all \
  && useradd -m -s /bin/bash testuser \
  && echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers

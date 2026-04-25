@@ -17,8 +17,12 @@ EOF
     ;;
 esac
 
+LEGENDARY_ZSH_HOME="${HOME}/.local/share/legendary-zsh"
 ZSHRC="${HOME}/.zshrc"
 STATE_DIR="${HOME}/.local/state/legendary-zsh"
+
+# shellcheck source=_legendary-common.sh
+source "$LEGENDARY_ZSH_HOME/bin/_legendary-common.sh"
 
 # Already enabled? Accept either the marker format or the legacy snippet.
 if grep -qF 'legendary-zsh:fastfetch-start' "$ZSHRC" 2>/dev/null \
@@ -27,22 +31,10 @@ if grep -qF 'legendary-zsh:fastfetch-start' "$ZSHRC" 2>/dev/null \
   exit 0
 fi
 
-# Install fastfetch if missing (same OS detection as legendary-setup-zsh).
-if ! command -v fastfetch &>/dev/null; then
-  echo "Installing fastfetch..."
-  if [[ "$OSTYPE" == darwin* ]]; then
-    brew install fastfetch
-  elif command -v pacman &>/dev/null; then
-    sudo pacman -S --needed --noconfirm fastfetch
-  elif command -v apt-get &>/dev/null; then
-    sudo apt-get install -y fastfetch
-  elif command -v dnf &>/dev/null; then
-    sudo dnf install -y fastfetch
-  else
-    echo "Error: couldn't detect a package manager to install fastfetch." >&2
-    echo "Install fastfetch manually, then re-run this command." >&2
-    exit 1
-  fi
+if ! _install_fastfetch; then
+  echo -e "\033[31m✗ fastfetch install failed.\033[0m" >&2
+  echo "  Fix the underlying issue above and try again." >&2
+  exit 1
 fi
 
 # Append the marker-wrapped block so legendary-disable-fastfetch can remove
