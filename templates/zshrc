@@ -10,8 +10,19 @@ source "$LEGENDARY_ZSH_HOME/shell/zoptions"
 # Load zsh plugins (syntax highlighting, autosuggestions, completions, fzf-tab)
 source "$LEGENDARY_ZSH_HOME/shell/plugins"
 
-# Initialize completion system (after plugins so zsh-completions fpath is available)
-autoload -U compinit && compinit
+# Initialize completion system (after plugins so zsh-completions fpath is
+# available). Cache the dump in ~/.cache/zsh and skip the slow insecure-files
+# check when the cache is less than a day old. Saves ~100-200ms per shell
+# start once the cache is warm.
+autoload -Uz compinit
+_zcompdump="$HOME/.cache/zsh/zcompdump"
+[[ -d "${_zcompdump:h}" ]] || mkdir -p "${_zcompdump:h}"
+if [[ -n "$_zcompdump"(#qNmh-24) ]]; then
+  compinit -C -d "$_zcompdump"
+else
+  compinit -d "$_zcompdump"
+fi
+unset _zcompdump
 
 # Load tmux functions and alias
 source "$LEGENDARY_ZSH_HOME/shell/tmux"
