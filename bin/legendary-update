@@ -30,6 +30,24 @@ echo "Updating legendary-zsh..."
 # Pull latest changes
 git -C "$LEGENDARY_ZSH_HOME" pull --ff-only || { echo "Error: git pull failed"; exit 1; }
 
+# Update bundled zsh plugins. Failures are warnings, not fatal — a plugin
+# with local changes or an unreachable remote shouldn't block the rest of
+# the update.
+PLUGINS_DIR="${LEGENDARY_ZSH_HOME}/plugins"
+if [ -d "$PLUGINS_DIR" ]; then
+  echo ""
+  echo "Updating zsh plugins..."
+  for plugin_dir in "$PLUGINS_DIR"/*/; do
+    [ -d "$plugin_dir/.git" ] || continue
+    plugin_name="$(basename "$plugin_dir")"
+    if git -C "$plugin_dir" pull --ff-only --quiet 2>/dev/null; then
+      echo -e "  \033[32m✓\033[0m $plugin_name"
+    else
+      echo -e "  \033[33m!\033[0m $plugin_name (skipped — local changes or network issue)"
+    fi
+  done
+fi
+
 # Run any pending migrations
 "$LEGENDARY_ZSH_HOME/bin/legendary-migrate"
 

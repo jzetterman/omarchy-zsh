@@ -41,7 +41,8 @@ tests/
 │   ├── 17_uninstall_preserves_user_config_dir.sh
 │   ├── 18_fastfetch_install_universe_handled.sh
 │   ├── 19_install_deps_all_tools_present.sh
-│   └── 20_path_add_persists_across_shells.sh
+│   ├── 20_path_add_persists_across_shells.sh
+│   └── 21_legendary_update_pulls_plugins.sh
 ├── assert.sh          # assertion helpers (sourced transitively via _lib.sh)
 ├── run.sh             # test runner
 └── README.md
