@@ -53,6 +53,13 @@ elif command -v apt-get &>/dev/null; then
     sudo apt-get install -y "${apt_pkgs[@]}"
   fi
 
+  # Manual installer paths below need gpg (for keyring import) and wget
+  # (for the eza key fetch). Minimal Ubuntu images don't include either.
+  if [ ${#manual_pkgs[@]} -gt 0 ]; then
+    sudo apt-get update -qq
+    sudo apt-get install -y --no-install-recommends gnupg wget
+  fi
+
   for pkg in "${manual_pkgs[@]}"; do
     case "$pkg" in
       starship)

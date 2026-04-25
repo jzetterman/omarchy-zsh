@@ -39,7 +39,8 @@ tests/
 │   ├── 15_migration_declines_preserves_bashrc.sh
 │   ├── 16_help_flag_works.sh
 │   ├── 17_uninstall_preserves_user_config_dir.sh
-│   └── 18_fastfetch_install_universe_handled.sh
+│   ├── 18_fastfetch_install_universe_handled.sh
+│   └── 19_install_deps_all_tools_present.sh
 ├── assert.sh          # assertion helpers (sourced transitively via _lib.sh)
 ├── run.sh             # test runner
 └── README.md
