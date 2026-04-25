@@ -56,7 +56,10 @@ _lz_append "$HOME/.local/share/legendary-zsh/bin"
 _lz_user_paths="$HOME/.config/legendary-zsh/paths"
 if [ -r "$_lz_user_paths" ]; then
   while IFS= read -r _lz_line || [ -n "$_lz_line" ]; do
-    _lz_line="${_lz_line%%#*}"
+    # Strip comments — escape '#' because zoptions enables EXTENDED_GLOB,
+    # under which a bare '#' in a pattern is a quantifier (and '#*' is a
+    # syntax error). Escaping makes it a literal in both bash and zsh.
+    _lz_line="${_lz_line%%\#*}"
     _lz_line="${_lz_line#"${_lz_line%%[![:space:]]*}"}"
     _lz_line="${_lz_line%"${_lz_line##*[![:space:]]}"}"
     [ -z "$_lz_line" ] && continue
